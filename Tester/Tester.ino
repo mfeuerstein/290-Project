@@ -5,11 +5,31 @@
 
 Adafruit_NeoPixel ring = Adafruit_NeoPixel(196, PIN, NEO_GRB + NEO_KHZ800);
 
+int maze[4][7][7];
+
 void setup() {
   ring.begin();
   ring.setBrightness(32);
   ring.clear(); // clear all pixels
   ring.show();  // show all pixels
+  for(int layer = 0; layer < 4; layer++){
+    for(int row = 0; row < 7; row++){
+      for(int column = 0; column < 7; column++){
+        maze[layer][row][column] = 0x000000;
+      }
+    }
+  }
+
+    maze[0][0][0] = 0x0000FF;
+  maze[0][0][1] = 0x0000FF;
+  maze[0][0][2] = 0x0000FF;
+  maze[0][0][3] = 0x0000FF;
+  maze[0][0][4] = 0x0000FF;
+  maze[0][1][0] = 0x00F00F;
+  maze[0][2][0] = 0x0000FF;
+  maze[0][2][1] = 0x0000FF;
+  maze[0][2][2] = 0x0000FF;
+  maze[0][1][4] = 0x0000FF;
 }
 
 void wipe(unsigned long color) {
@@ -27,6 +47,29 @@ void setCoord(int y, int z, int x){
   int i = layer + row + column;
   ring.setPixelColor(i, 0xFF0000);
   ring.show();
+}
+
+void setCoord(int y, int z, int x, int color){
+  int layer = 49 * y;
+  int row = 7 * z;
+  int column = (z%2?6 - x:x);
+  int i = layer + row + column;
+  ring.setPixelColor(i, color);
+  ring.show();
+}
+
+void setMaze(int m[][7][7]){
+  for(int layer = 0; layer < 4; layer++){
+    for(int row = 0; row < 7; row++){
+      for(int column = 0; column < 7; column++){
+        setCoord(layer, row, column, m[layer][row][column]);
+      }
+    }
+  }
+}
+
+boolean hitWall(int y, int z, int x, int m[][7][7]){
+  return m[y][z][x] != 0x000000;
 }
 
 void setLayer(int y){
@@ -49,7 +92,7 @@ void getNeighbors(int y, int z, int x){
     }
   }
 }
-
+  int y = 0, z = 1, x = 0;
 void loop() {
  // wipe(0xFF0000); // red, 0xFF0000 is equivalent to ring.Color(255,0,0);
   //wipe(0x00FF00); // green
@@ -61,7 +104,26 @@ void loop() {
 //  setLayer(1);
 //  setLayer(2);
 //  setLayer(3);
-getNeighbors(0,0,3);
+
+setMaze(maze);
+  delay(500);
+
+  if(hitWall(0, 1, 1, maze)){
+    maze[y][z][x] = 0x00FF00;
+  }
+  else
+  {
+    maze[y][z][x] = 0x000000;
+    x = 1;
+    maze[y][z][x] = 0x00F00F;
+    
+  }
+  
+//  maze[1][2][2] = 0x0000FF;
+//  maze[2][2][2] = 0x0000FF;
+//  maze[3][2][2] = 0x0000FF;
+  setMaze(maze);
+//getNeighbors(0,0,3);
 }
 
 void rainbow() {
