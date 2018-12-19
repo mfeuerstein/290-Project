@@ -45,8 +45,8 @@ void wipe(unsigned long color) {
 
 void setCoord(int y, int z, int x){
   int layer = 49 * y;
-  int row = 7 * z;
-  int column = (z%2?6 - x:x);
+  int row = (y%2?6 - z:z) * 7;
+  int column = (y%2?(z%2?x:6 - x):(z%2?6 - x:x));
   int i = layer + row + column;
   ring.setPixelColor(i, 0xFF0000);
   ring.show();
@@ -99,8 +99,8 @@ void loop() {
  // rainbow();
   //rainbowCycle();
 //  setCoord(0,1,6);
-//  setLayer(0);
-//  setLayer(1);
+  setLayer(0);
+  setLayer(1);
 //  setLayer(2);
 //  setLayer(3);
 
@@ -125,7 +125,7 @@ void loop() {
 //  setMaze(maze);
 //getNeighbors(0,0,3);
 
-  movePlayer();
+//  movePlayer();
 }
 
 void rainbow() {
