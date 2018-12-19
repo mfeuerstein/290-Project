@@ -6,6 +6,7 @@
 Adafruit_NeoPixel ring = Adafruit_NeoPixel(196, PIN, NEO_GRB + NEO_KHZ800);
 
 int maze[4][7][7];
+int player = (0,0,0);
 
 void setup() {
   ring.begin();
@@ -20,7 +21,7 @@ void setup() {
     }
   }
 
-    maze[0][0][0] = 0x0000FF;
+  maze[0][0][0] = 0x0000FF;
   maze[0][0][1] = 0x0000FF;
   maze[0][0][2] = 0x0000FF;
   maze[0][0][3] = 0x0000FF;
@@ -30,6 +31,8 @@ void setup() {
   maze[0][2][1] = 0x0000FF;
   maze[0][2][2] = 0x0000FF;
   maze[0][1][4] = 0x0000FF;
+  player = (0,1,1);
+  Serial.begin(9600);
 }
 
 void wipe(unsigned long color) {
@@ -68,10 +71,6 @@ void setMaze(int m[][7][7]){
   }
 }
 
-boolean hitWall(int y, int z, int x, int m[][7][7]){
-  return m[y][z][x] != 0x000000;
-}
-
 void setLayer(int y){
   for(int z = 0; z < 7; z++){
     for(int x = 0; x < 7;x++){
@@ -105,25 +104,28 @@ void loop() {
 //  setLayer(2);
 //  setLayer(3);
 
-setMaze(maze);
-  delay(500);
-
-  if(hitWall(0, 1, 1, maze)){
-    maze[y][z][x] = 0x00FF00;
-  }
-  else
-  {
-    maze[y][z][x] = 0x000000;
-    x = 1;
-    maze[y][z][x] = 0x00F00F;
-    
-  }
+//setMaze(maze);
+//  delay(500);
+//
+//  if(hitWall(0, 1, 1, maze)){
+//    maze[y][z][x] = 0x00FF00;
+//  }
+//  else
+//  {
+//    maze[y][z][x] = 0x000000;
+//    x = 1;
+//    maze[y][z][x] = 0x00F00F;
+//    
+//  }
   
 //  maze[1][2][2] = 0x0000FF;
 //  maze[2][2][2] = 0x0000FF;
 //  maze[3][2][2] = 0x0000FF;
-  setMaze(maze);
+
+//  setMaze(maze);
 //getNeighbors(0,0,3);
+
+  movePlayer();
 }
 
 void rainbow() {
@@ -161,6 +163,56 @@ uint32_t Wheel(byte WheelPos) {
   }
   WheelPos -= 170;
   return ring.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+}
+
+boolean hitWall(int y, int z, int x, int m[][7][7]){
+  return m[y][z][x] == 0x0000FF;
+}
+
+void movePlayer(){
+ char receivedChar;
+ if (Serial.available() > 0) {
+  receivedChar = Serial.read();
+  
+  if(receivedChar=='l'){
+    if(!hitWall(y, z+1, x, maze) && z < 6){
+      maze[y][z][x] = 0x000000;
+      z=z+1;
+    }
+  }
+  else if(receivedChar=='r'){
+    if(!hitWall(y, z-1, x, maze) && z > 0){
+      maze[y][z][x] = 0x000000;
+      z=z-1;
+    }
+  }
+  else if(receivedChar=='f'){
+    if(!hitWall(y, z, x+1, maze) && x < 6){
+      maze[y][z][x] = 0x000000;
+      x=x+1;
+    }
+  }
+  else if(receivedChar=='b'){
+    if(!hitWall(y, z, x-1, maze) && x > 0){
+      maze[y][z][x] = 0x000000;
+      x=x-1;
+    }
+  }
+  else if(receivedChar=='u'){
+    if(!hitWall(y+1, z, x, maze) && y < 3){
+      maze[y][z][x] = 0x000000;
+      y=y+1;
+    }
+  }
+  else if(receivedChar=='d'){
+    if(!hitWall(y-1, z, x, maze) && y > 0){
+      maze[y][z][x] = 0x000000;
+      y=y-1;
+    }
+  }
+  maze[y][z][x] = 0x00F00F;
+ }
+ setMaze(maze);
 }
 
 
