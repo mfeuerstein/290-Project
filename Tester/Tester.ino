@@ -7,6 +7,7 @@ Adafruit_NeoPixel ring = Adafruit_NeoPixel(196, PIN, NEO_GRB + NEO_KHZ800);
 
 int maze[4][7][7];
 int player = (0,0,0);
+int y = 0, z = 1, x = 1;
 
 void setup() {
   ring.begin();
@@ -21,17 +22,48 @@ void setup() {
     }
   }
 
-  maze[0][0][0] = 0x0000FF;
-  maze[0][0][1] = 0x0000FF;
-  maze[0][0][2] = 0x0000FF;
-  maze[0][0][3] = 0x0000FF;
-  maze[0][0][4] = 0x0000FF;
-  maze[0][1][0] = 0x00F00F;
-  maze[0][2][0] = 0x0000FF;
-  maze[0][2][1] = 0x0000FF;
-  maze[0][2][2] = 0x0000FF;
-  maze[0][1][4] = 0x0000FF;
-  player = (0,1,1);
+  maze[0][0][0] = maze[0][0][1] = maze[0][0][2] = maze[0][0][3] = maze[0][0][4] = maze[0][0][5] = maze[0][0][6] = 
+  maze[0][1][0]                                                                                 = maze[0][1][6] =
+  maze[0][2][0] = maze[0][2][1] = maze[0][2][2] =                 maze[0][2][4]                 = maze[0][2][6] =
+  maze[0][3][0] = maze[0][3][1] = maze[0][3][2] =                 maze[0][3][4]                 = maze[0][3][6] =
+  maze[0][4][0] = maze[0][4][1] = maze[0][4][2] =                 maze[0][4][4]                 = maze[0][4][6] =
+  maze[0][5][0] =                                                 maze[0][5][4]                 = maze[0][5][6] =
+  maze[0][6][0] = maze[0][6][1] = maze[0][6][2] = maze[0][6][3] = maze[0][6][4] = maze[0][6][5] = maze[0][6][6] =            
+                                                                                  
+  
+  
+  maze[1][0][0] =                 maze[1][0][3] =                 maze[1][0][4] =    
+                  maze[1][1][1] =                                 maze[1][1][4] =
+  maze[1][2][0] = maze[1][2][1] =                 maze[1][2][3] =                 maze[1][2][5] =
+                  maze[1][3][1] = maze[1][3][2] =                                 maze[1][3][5] =
+                  maze[1][4][1] = maze[1][4][2] =                 maze[1][4][4] =                 maze[1][4][6] =
+                                                                  maze[1][5][4] = maze[1][5][5] = maze[1][5][6] =
+  maze[1][6][0] = maze[1][6][1] = maze[1][6][2] = maze[1][6][3] = maze[1][6][4] = maze[1][6][5] = maze[1][6][6] =                                                                  
+
+                                                                  
+  maze[2][0][0] = maze[2][0][1] =                                                                 
+                  maze[2][1][1] =
+                  maze[2][2][1] =
+  maze[2][3][0] = maze[2][3][1] =
+                  maze[2][4][1] =
+  maze[2][5][0] = maze[2][5][1] =                                                maze[2][5][4] = 
+                  
+  
+  
+  maze[3][0][0] =                 maze[3][0][2] =                 maze[3][0][4] =                 maze[3][0][6] =
+                  maze[3][1][1] =                 maze[3][1][3] =                 maze[3][1][5] =               
+  maze[3][2][0] =                 maze[3][2][2] =                 maze[3][2][4] =                 maze[3][2][6] =
+                  maze[3][3][1] =                 maze[3][3][3] =                 maze[3][3][5] =
+  maze[3][4][0] =                 maze[3][4][2] =                 maze[3][4][4] =                 maze[3][4][6] =
+                  maze[3][5][1] =                 maze[3][5][3] =                 maze[3][5][5] =
+  maze[3][6][0] =                 maze[3][6][2] =                 maze[3][6][4] =                 
+
+
+  0x0000FF;
+    
+  maze[y][z][x] = 0x00F00F;
+    
+  
   Serial.begin(9600);
 }
 
@@ -54,8 +86,8 @@ void setCoord(int y, int z, int x){
 
 void setCoord(int y, int z, int x, int color){
   int layer = 49 * y;
-  int row = 7 * z;
-  int column = (z%2?6 - x:x);
+  int row = row = (y%2?6 - z:z) * 7;
+  int column = (y%2?(z%2?x:6 - x):(z%2?6 - x:x));
   int i = layer + row + column;
   ring.setPixelColor(i, color);
   ring.show();
@@ -91,7 +123,7 @@ void getNeighbors(int y, int z, int x){
     }
   }
 }
-  int y = 0, z = 1, x = 0;
+
 void loop() {
  // wipe(0xFF0000); // red, 0xFF0000 is equivalent to ring.Color(255,0,0);
   //wipe(0x00FF00); // green
@@ -99,24 +131,14 @@ void loop() {
  // rainbow();
   //rainbowCycle();
 //  setCoord(0,1,6);
-  setLayer(0);
-  setLayer(1);
+//  setLayer(0);
+//  setLayer(1);
 //  setLayer(2);
 //  setLayer(3);
 
-//setMaze(maze);
+setMaze(maze);
 //  delay(500);
 //
-//  if(hitWall(0, 1, 1, maze)){
-//    maze[y][z][x] = 0x00FF00;
-//  }
-//  else
-//  {
-//    maze[y][z][x] = 0x000000;
-//    x = 1;
-//    maze[y][z][x] = 0x00F00F;
-//    
-//  }
   
 //  maze[1][2][2] = 0x0000FF;
 //  maze[2][2][2] = 0x0000FF;
@@ -125,7 +147,7 @@ void loop() {
 //  setMaze(maze);
 //getNeighbors(0,0,3);
 
-//  movePlayer();
+  movePlayer();
 }
 
 void rainbow() {
@@ -175,15 +197,15 @@ void movePlayer(){
   receivedChar = Serial.read();
   
   if(receivedChar=='l'){
-    if(!hitWall(y, z+1, x, maze) && z < 6){
+    if(!hitWall(y, z-1, x, maze) && z < 6){
       maze[y][z][x] = 0x000000;
       z=z+1;
     }
   }
   else if(receivedChar=='r'){
-    if(!hitWall(y, z-1, x, maze) && z > 0){
+    if(!hitWall(y, z+1, x, maze) && z > 0){
       maze[y][z][x] = 0x000000;
-      z=z-1;
+      z=z+1;
     }
   }
   else if(receivedChar=='f'){
