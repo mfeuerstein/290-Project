@@ -63,7 +63,7 @@ void setup() {
     
   maze[y][z][x] = 0x00F00F;
     
-  
+  setMaze(maze);
   Serial.begin(9600);
 }
 
@@ -84,23 +84,28 @@ void setCoord(int y, int z, int x){
   ring.show();
 }
 
-void setCoord(int y, int z, int x, int color){
+void setCoord(int y, int z, int x, unsigned long color){
   int layer = 49 * y;
   int row = row = (y%2?6 - z:z) * 7;
   int column = (y%2?(z%2?x:6 - x):(z%2?6 - x:x));
   int i = layer + row + column;
   ring.setPixelColor(i, color);
-  ring.show();
 }
 
 void setMaze(int m[][7][7]){
+  unsigned color;
   for(int layer = 0; layer < 4; layer++){
     for(int row = 0; row < 7; row++){
       for(int column = 0; column < 7; column++){
-        setCoord(layer, row, column, m[layer][row][column]);
+        if(layer > y - 2 && layer < y + 2 )
+          color =  m[layer][row][column];
+        else
+          color = 0;
+        setCoord(layer, row, column,color);
       }
     }
   }
+  ring.show();
 }
 
 void setLayer(int y){
@@ -135,8 +140,6 @@ void loop() {
 //  setLayer(1);
 //  setLayer(2);
 //  setLayer(3);
-
-setMaze(maze);
 //  delay(500);
 //
   
@@ -193,48 +196,61 @@ boolean hitWall(int y, int z, int x, int m[][7][7]){
 
 void movePlayer(){
  char receivedChar;
+ bool yChange = false;
+ 
  if (Serial.available() > 0) {
   receivedChar = Serial.read();
   
   if(receivedChar=='l'){
     if(!hitWall(y, z-1, x, maze) && z < 6){
+      setCoord(y, z, x, 0x00000);
       maze[y][z][x] = 0x000000;
       z=z+1;
     }
   }
   else if(receivedChar=='r'){
     if(!hitWall(y, z+1, x, maze) && z > 0){
+      setCoord(y, z, x, 0x00000);
       maze[y][z][x] = 0x000000;
       z=z+1;
     }
   }
   else if(receivedChar=='f'){
     if(!hitWall(y, z, x+1, maze) && x < 6){
+      setCoord(y, z, x, 0x00000);
       maze[y][z][x] = 0x000000;
       x=x+1;
     }
   }
   else if(receivedChar=='b'){
     if(!hitWall(y, z, x-1, maze) && x > 0){
+      setCoord(y, z, x, 0x00000);
       maze[y][z][x] = 0x000000;
       x=x-1;
     }
   }
   else if(receivedChar=='u'){
     if(!hitWall(y+1, z, x, maze) && y < 3){
+      setCoord(y, z, x, 0x00000);
       maze[y][z][x] = 0x000000;
       y=y+1;
+      yChange = true;
     }
   }
   else if(receivedChar=='d'){
     if(!hitWall(y-1, z, x, maze) && y > 0){
+      setCoord(y, z, x, 0x00000);
       maze[y][z][x] = 0x000000;
       y=y-1;
+      yChange = true;
     }
   }
   maze[y][z][x] = 0x00F00F;
  }
- setMaze(maze);
+ setCoord(y, z, x, 0x00F00F);
+ if(yChange == true)
+  setMaze(maze);
+ ring.show();
 }
 
 
