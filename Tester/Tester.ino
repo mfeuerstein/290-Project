@@ -27,26 +27,27 @@ void setup() {
   maze[0][2][0] = maze[0][2][1] = maze[0][2][2] =                 maze[0][2][4]                 = maze[0][2][6] =
   maze[0][3][0] = maze[0][3][1] = maze[0][3][2] =                 maze[0][3][4]                 = maze[0][3][6] =
   maze[0][4][0] = maze[0][4][1] = maze[0][4][2] =                 maze[0][4][4]                 = maze[0][4][6] =
-  maze[0][5][0] =                                                 maze[0][5][4]                 = maze[0][5][6] =
+  maze[0][5][0] = maze[0][5][1] = maze[0][5][2] =                 maze[0][5][4]                 = maze[0][5][6] =
   maze[0][6][0] = maze[0][6][1] = maze[0][6][2] = maze[0][6][3] = maze[0][6][4] = maze[0][6][5] = maze[0][6][6] =            
                                                                                   
   
   
-  maze[1][0][0] =                 maze[1][0][3] =                 maze[1][0][4] =    
-                  maze[1][1][1] =                                 maze[1][1][4] =
-  maze[1][2][0] = maze[1][2][1] =                 maze[1][2][3] =                 maze[1][2][5] =
-                  maze[1][3][1] = maze[1][3][2] =                                 maze[1][3][5] =
-                  maze[1][4][1] = maze[1][4][2] =                 maze[1][4][4] =                 maze[1][4][6] =
-                                                                  maze[1][5][4] = maze[1][5][5] = maze[1][5][6] =
+  maze[1][0][0] = maze[1][0][1] = maze[1][0][2] = maze[1][0][3] = maze[1][0][4] = maze[1][0][5] = maze[1][0][6] = 
+  maze[1][1][0] =                                 
+  maze[1][2][0] =                 maze[1][2][2] = maze[1][2][3] = maze[1][2][4] = maze[1][2][5] =
+  maze[1][3][0] = maze[1][3][1] = maze[1][3][2] = maze[1][3][3] = maze[1][3][4] = maze[1][3][5] =
+  maze[1][4][0] = maze[1][4][1] =                 maze[1][4][3] = maze[1][4][4] =                 
+  maze[1][5][0] = maze[1][5][1] =                                 maze[1][5][4] =                 maze[1][5][6] =
   maze[1][6][0] = maze[1][6][1] = maze[1][6][2] = maze[1][6][3] = maze[1][6][4] = maze[1][6][5] = maze[1][6][6] =                                                                  
 
                                                                   
-  maze[2][0][0] = maze[2][0][1] =                                                                 
-                  maze[2][1][1] =
-                  maze[2][2][1] =
-  maze[2][3][0] = maze[2][3][1] =
-                  maze[2][4][1] =
-  maze[2][5][0] = maze[2][5][1] =                                                maze[2][5][4] = 
+  maze[2][0][0] = maze[2][0][1] = maze[2][0][2] = maze[2][0][3] =                                 maze[2][0][6] =                                                                 
+  maze[2][1][0] = maze[2][1][1] = maze[2][1][2] = maze[2][1][3] =                 maze[2][1][5] = maze[2][1][6] = 
+  maze[2][2][0] =                 
+  maze[2][3][0] = maze[2][3][1] = maze[2][3][2] =
+  maze[2][4][0] = maze[2][4][1] =                                 maze[2][4][4] = maze[2][4][5] =
+  maze[2][5][0] = maze[2][5][1] = maze[2][5][2] = maze[2][5][3] = maze[2][5][4] = 
+  maze[2][6][0] = maze[2][6][1] = maze[2][6][2] = maze[2][6][3] = maze[2][6][4] = maze[2][6][5] = maze[2][6][6] = 
                   
   
   
@@ -97,7 +98,8 @@ void setMaze(int m[][7][7]){
   for(int layer = 0; layer < 4; layer++){
     for(int row = 0; row < 7; row++){
       for(int column = 0; column < 7; column++){
-        if(layer > y - 2 && layer < y + 2 )
+//        if(layer > y - 2 && layer < y + 2 )
+        if(layer == y)
           color =  m[layer][row][column];
         else
           color = 0;
@@ -202,14 +204,14 @@ void movePlayer(){
   receivedChar = Serial.read();
   
   if(receivedChar=='l'){
-    if(!hitWall(y, z-1, x, maze) && z < 6){
+    if(!hitWall(y, z-1, x, maze) && z > 0){
       setCoord(y, z, x, 0x00000);
       maze[y][z][x] = 0x000000;
-      z=z+1;
+      z=z-1;
     }
   }
   else if(receivedChar=='r'){
-    if(!hitWall(y, z+1, x, maze) && z > 0){
+    if(!hitWall(y, z+1, x, maze) && z < 6){
       setCoord(y, z, x, 0x00000);
       maze[y][z][x] = 0x000000;
       z=z+1;
