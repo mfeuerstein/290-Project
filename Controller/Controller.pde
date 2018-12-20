@@ -1,7 +1,7 @@
   import processing.serial.*;
 Serial port;
 /* change serialName to match yours */
-String serialName = "COM8";
+String serialName = "COM4";
 
 
 int rectX, rectY;      // Position of square button
